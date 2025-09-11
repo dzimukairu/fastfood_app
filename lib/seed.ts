@@ -53,8 +53,8 @@ async function uploadImageToStorage(imageUrl: string) {
 
   const fileObj = {
     name: imageUrl.split("/").pop() || `file-${Date.now()}.jpg`,
-    type: "image/png",
-    size: blob.size,
+    type: blob.type || "image/png",
+    size: blob.size || 0,
     uri: imageUrl,
   };
 
