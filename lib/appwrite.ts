@@ -1,12 +1,17 @@
-import { CreateUserParams, SignInParams } from "@/type";
-import { Account, Avatars, Client, Databases, ID, Query } from "react-native-appwrite";
+import { CreateUserParams, GetMenuParams, SignInParams } from "@/type";
+import { Account, Avatars, Client, Databases, ID, Query, Storage } from "react-native-appwrite";
 
 export const appwriteConfig = {
   endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT!,
   projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID!,
   platform: "com.dzimukairu.fastfood",
   databaseId: "68c00e4d003702841537",
+  bucketId: "68c119ab00058cc2bdf0",
   userTableId: "user",
+  categoryTableId: "categories",
+  menuTableId: "menu",
+  customizationsTableId: "customizations",
+  menuCustomizationsTableId: "menu_customizations",
 };
 
 export const client = new Client();
@@ -15,6 +20,7 @@ client.setEndpoint(appwriteConfig.endpoint).setProject(appwriteConfig.projectId)
 
 export const account = new Account(client);
 export const databases = new Databases(client);
+export const storage = new Storage(client);
 const avatars = new Avatars(client);
 
 export const createUser = async ({ email, password, name }: CreateUserParams) => {
@@ -64,5 +70,30 @@ export const getCurrentUser = async () => {
   } catch (error) {
     console.log(error);
     throw new Error(error as string);
+  }
+};
+
+export const getMenu = async ({ category, query }: GetMenuParams) => {
+  try {
+    const queries = [];
+
+    if (category) queries.push(Query.equal("categories", category));
+    if (query) queries.push(Query.search("name", query));
+
+    const menus = await databases.listDocuments(appwriteConfig.databaseId, appwriteConfig.menuTableId, queries);
+
+    return menus.documents;
+  } catch (error) {
+    throw new Error(error as string);
+  }
+};
+
+export const getCategories = async () => {
+  try {
+    const categories = await databases.listDocuments(appwriteConfig.databaseId, appwriteConfig.categoryTableId);
+
+    return categories.documents;
+  } catch (e) {
+    throw new Error(e as string);
   }
 };

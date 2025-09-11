@@ -54,7 +54,7 @@ export default function TabLayout() {
         name="search"
         options={{
           title: "Search",
-          tabBarIcon: ({ focused }) => <TabBarIcon title="search" icon={images.search} focused={focused} />,
+          tabBarIcon: ({ focused }) => <TabBarIcon title="Search" icon={images.search} focused={focused} />,
         }}
       />
       <Tabs.Screen
